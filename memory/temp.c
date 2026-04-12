@@ -1,27 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 int main() {
-char dna[] = "ATGCGATTACGATCAGCGATCG";
-int gc = 0;
-int at = 0;
-int i;
-
-for(i = 0; dna[i] != '\0'; i++) {
-    if (dna[i] == 'G' || dna[i] == 'C') gc++;
-    if (dna[i] == 'A' || dna[i] == 'T') at++;
-}
-
-double gc_percent = (double)gc / (gc + at) * 100.0;
-printf("DNA sequence: %s\n", dna);
-printf("GC-content: %.2f%%\n", gc_percent);
-
-strcpy(dna, "GGCCATGATTTAGGGGCCC");
-gc = 0;
-at = 0;
-for(i = 0; dna[i] != '\0'; i++) {
-    if (dna[i] == 'G' || dna[i] == 'C') gc++;
-    if (dna[i] == 'A' || dna[i] == 'T') at++;
-}
-gc_percent = (double)gc / (gc + at) * 100.0;
-printf("New DNA: %s\nGC-content: %.2f%%\n", dna, gc_percent);
-
+int x = 42; printf("x=%d\n", x);
+printf("x*2=%d\n", x*2);
 return 0; }

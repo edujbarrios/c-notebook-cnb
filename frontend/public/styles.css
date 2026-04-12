@@ -1,0 +1,366 @@
+/* ── Reset & base ──────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --border: #dadce0;
+  --primary: #1a73e8;
+  --primary-hover: #1765cc;
+  --danger: #d93025;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --output-bg: #f1f3f4;
+  --error-bg: #fce8e6;
+  --success-border: #34a853;
+  --cell-radius: 8px;
+  --toolbar-height: 48px;
+  --font-mono: "Roboto Mono", "Consolas", "Courier New", monospace;
+  --font-sans: "Google Sans", "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── Toolbar ───────────────────────────────────────────────────────── */
+#toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--toolbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--primary);
+  margin-right: 12px;
+}
+
+#toolbar button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+#toolbar button:hover {
+  background: var(--bg);
+}
+
+#btn-run-all {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary) !important;
+}
+
+#btn-run-all:hover {
+  background: var(--primary-hover) !important;
+}
+
+/* ── Notebook area ─────────────────────────────────────────────────── */
+#notebook {
+  max-width: 900px;
+  margin: calc(var(--toolbar-height) + 16px) auto 80px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Cell ──────────────────────────────────────────────────────────── */
+.cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--cell-radius);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.cell:hover,
+.cell.focused {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.cell-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.cell-header .cell-label {
+  flex: 1;
+  font-family: var(--font-mono);
+}
+
+.cell-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.cell-header button:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.cell-header .btn-run {
+  color: var(--primary);
+  font-size: 16px;
+}
+
+.cell-header .btn-run:hover {
+  background: rgba(26, 115, 232, 0.1);
+}
+
+.cell-header .btn-delete:hover {
+  color: var(--danger);
+  background: rgba(217, 48, 37, 0.1);
+}
+
+/* CodeMirror overrides */
+.cell .CodeMirror {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  height: auto;
+  min-height: 60px;
+  border: none;
+}
+
+.cell .CodeMirror-scroll {
+  min-height: 60px;
+}
+
+/* ── Output area ───────────────────────────────────────────────────── */
+.cell-output {
+  display: none;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--output-bg);
+  border-top: 1px solid var(--border);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.cell-output.visible {
+  display: block;
+}
+
+.cell-output.error {
+  background: var(--error-bg);
+  color: var(--danger);
+}
+
+.cell-output.success {
+  border-left: 3px solid var(--success-border);
+}
+
+/* ── Spinner on running cell ───────────────────────────────────────── */
+.cell.running .cell-header {
+  background: #e8f0fe;
+}
+
+.cell.running .btn-run::after {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--primary);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Add cell FAB ──────────────────────────────────────────────────── */
+.add-cell-btn {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0;
+}
+
+.add-cell-btn button {
+  padding: 4px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: background 0.15s, color 0.15s;
+}
+
+.add-cell-btn button:hover {
+  background: var(--surface);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+#btn-add-cell {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.15s;
+  z-index: 100;
+}
+
+#btn-add-cell:hover {
+  background: var(--primary-hover);
+}
+
+/* ── Modal ─────────────────────────────────────────────────────────── */
+#modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+#modal-overlay.hidden {
+  display: none;
+}
+
+#modal {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 24px;
+  width: 380px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+#modal h3 {
+  font-size: 18px;
+}
+
+#modal-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+#modal-input:focus {
+  border-color: var(--primary);
+}
+
+#modal-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#modal-list .notebook-item {
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+#modal-list .notebook-item:hover {
+  background: var(--bg);
+}
+
+#modal-list .notebook-item.selected {
+  background: #e8f0fe;
+  color: var(--primary);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-actions button {
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+.modal-actions button:hover {
+  background: var(--bg);
+}
+
+#modal-ok {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary) !important;
+}
+
+#modal-ok:hover {
+  background: var(--primary-hover) !important;
+}

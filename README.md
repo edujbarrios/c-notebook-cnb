@@ -52,6 +52,7 @@ include/        → Header files
 src/            → Source files
 output_cnbs/    → Saved notebooks with .cnb extension
 memory/         → Temporary compilation and execution files
+frontend/       → Web frontend (Google Colab-like UI)
 Makefile        → Build script
 README.md       → This file
 ```
@@ -147,6 +148,39 @@ GC-content: 63.16%
 
 ---
 ````
+
+## Web Frontend (Google Colab-like UI)
+
+A web-based frontend that emulates Google Colab is available in the `frontend/` directory. It provides:
+
+- **Cell-based editing** with syntax highlighting (CodeMirror)
+- **Run individual cells** or **Run All** with real-time output
+- **Add, delete, reorder** cells interactively
+- **Save/Load** notebooks using the `.cnb` format
+- **Keyboard shortcuts**: `Shift+Enter` to run the current cell
+
+### Requirements
+- Node.js (v18+)
+- GCC Compiler
+
+### Setup & Run
+
+```bash
+cd frontend
+npm install
+npm run build
+npm start
+```
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### How It Works
+
+The frontend consists of:
+- **Express server** (TypeScript) — serves the UI and exposes a REST API for cell management, compilation, and `.cnb` file handling
+- **Web UI** (HTML/CSS/JS) — single-page application styled after Google Colab with CodeMirror editors for C code
+
+The server compiles C code by concatenating all cells into a single source file and invoking GCC, mirroring the exact same compilation model as the terminal backend.
 
 ## Author
 
