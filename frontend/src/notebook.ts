@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const OUTPUT_DIR = path.resolve(__dirname, "../../output_cnbs");
+const OUTPUT_DIR = path.resolve(__dirname, "../../backend/output_cnbs");
 
 export interface Cell {
   id: number;

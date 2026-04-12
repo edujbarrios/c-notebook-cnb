@@ -1,5 +1,5 @@
 # Compiled binaries
-cnb
-memory/temp.out
-memory/temp.c
-memory/memory_output.txt
+backend/cnb
+backend/memory/temp.out
+backend/memory/temp.c
+backend/memory/memory_output.txt
