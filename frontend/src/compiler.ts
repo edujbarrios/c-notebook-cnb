@@ -2,7 +2,7 @@ import { execFile } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 
-const MEMORY_DIR = path.resolve(__dirname, "../../memory");
+const MEMORY_DIR = path.resolve(__dirname, "../../backend/memory");
 const TEMP_C = path.join(MEMORY_DIR, "temp.c");
 const TEMP_OUT = path.join(MEMORY_DIR, "temp.out");
 
