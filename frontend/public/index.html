@@ -5,11 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>C Notebook</title>
   <link rel="stylesheet" href="styles.css" />
-  <!-- CodeMirror 5 from CDN for C syntax highlighting -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css" integrity="sha384-+ma3cSesarq1e82Ikf2BldKJP8AJATyOpk37v3ONJB25Nt75L9k6CiFc9rVZkAzH" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/dracula.min.css" integrity="sha384-wAqBMBKz7YErwinzeaQiIjQ9hd4LQXBM5EF78xxy9TZ/b6+o/rXBawSiF7Z6m9S" crossorigin="anonymous" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js" integrity="sha384-BpHSGNJRdlVb2aBFG1G3ECKO2jCWqk/FgwVR6bByKMEL6EAiC5MYfGHIbkvy5ae" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/clike/clike.min.js" integrity="sha384-oL+UYYCLnMXBa6FUXnJQN0rW7TWkw1gJLFiEzOEaCL7A2sjSF7AU1MxICVSYBEg" crossorigin="anonymous"></script>
+  <!--
+    CodeMirror 5 from CDN for C syntax highlighting.
+    When deploying to production, generate and add SRI integrity hashes:
+      openssl dgst -sha384 -binary <file> | openssl base64 -A
+  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/dracula.min.css" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/clike/clike.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <!-- Top toolbar -->

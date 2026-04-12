@@ -5,7 +5,6 @@ import * as path from "path";
 const MEMORY_DIR = path.resolve(__dirname, "../../memory");
 const TEMP_C = path.join(MEMORY_DIR, "temp.c");
 const TEMP_OUT = path.join(MEMORY_DIR, "temp.out");
-const OUTPUT_TXT = path.join(MEMORY_DIR, "memory_output.txt");
 
 export interface CompilationResult {
   success: boolean;
