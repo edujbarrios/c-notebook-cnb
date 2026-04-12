@@ -13,6 +13,9 @@ export interface Notebook {
   cells: Cell[];
 }
 
+/** Monotonically increasing counter for unique cell IDs */
+let nextCellId = 1;
+
 /** Create a fresh empty notebook */
 export function createNotebook(): Notebook {
   return { cells: [] };
@@ -20,7 +23,7 @@ export function createNotebook(): Notebook {
 
 /** Add a new cell and return its id */
 export function addCell(nb: Notebook, code = ""): Cell {
-  const cell: Cell = { id: Date.now(), code, output: "" };
+  const cell: Cell = { id: nextCellId++, code, output: "" };
   nb.cells.push(cell);
   return cell;
 }
@@ -46,12 +49,34 @@ export function moveCell(
   return true;
 }
 
+// ─── Path safety ───────────────────────────────────────────────────────
+
+/**
+ * Sanitise a user-provided name so it is a safe, flat filename component.
+ * Only alphanumerics, hyphens, and underscores are allowed.
+ */
+function sanitiseFilename(name: string): string {
+  return name.replace(/[^a-zA-Z0-9_\-]/g, "_");
+}
+
+/**
+ * Build a safe absolute path inside OUTPUT_DIR.
+ * Throws if the resolved path escapes the output directory.
+ */
+function safePath(name: string): string {
+  const safeName = sanitiseFilename(name);
+  const resolved = path.resolve(OUTPUT_DIR, `${safeName}.cnb`);
+  if (!resolved.startsWith(OUTPUT_DIR + path.sep) && resolved !== OUTPUT_DIR) {
+    throw new Error("Invalid notebook path");
+  }
+  return resolved;
+}
+
 // ─── .cnb serialisation ────────────────────────────────────────────────
 
 export function saveCnb(nb: Notebook, filename: string): string {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  const safeName = filename.replace(/[^a-zA-Z0-9_\-]/g, "_");
-  const filePath = path.join(OUTPUT_DIR, `${safeName}.cnb`);
+  const filePath = safePath(filename);
 
   const lines: string[] = ["CNOTEBOOK", `CELLS:${nb.cells.length}`];
   for (const cell of nb.cells) {
@@ -101,7 +126,7 @@ export function loadCnb(filePath: string): Notebook | null {
     i++; // skip "---"
 
     nb.cells.push({
-      id: Date.now() + c,
+      id: nextCellId++,
       code: codeLines.join("\n"),
       output: outputLines.join("\n"),
     });
@@ -118,6 +143,5 @@ export function listNotebooks(): string[] {
 }
 
 export function getNotebookPath(name: string): string {
-  const safeName = name.replace(/[^a-zA-Z0-9_\-\.]/g, "_");
-  return path.join(OUTPUT_DIR, safeName.endsWith(".cnb") ? safeName : `${safeName}.cnb`);
+  return safePath(name);
 }

@@ -124,10 +124,10 @@ function render() {
 // ── Cell operations ───────────────────────────────────────────────────
 
 /** Debounced cell update */
-let _updateTimers = {};
+const updateTimers = {};
 function debouncedUpdate(id, code) {
-  clearTimeout(_updateTimers[id]);
-  _updateTimers[id] = setTimeout(() => API.updateCell(id, code), 400);
+  clearTimeout(updateTimers[id]);
+  updateTimers[id] = setTimeout(() => API.updateCell(id, code), 400);
 }
 
 async function runSingleCell(id) {

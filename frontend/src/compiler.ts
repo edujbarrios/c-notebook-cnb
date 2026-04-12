@@ -57,7 +57,13 @@ export async function compileAndRun(
   }
 }
 
-/* Helper: promise‑based execFile with a timeout */
+/**
+ * Execute a command as a child process with a timeout.
+ * @param cmd   - Absolute path or name of the executable to run.
+ * @param args  - Array of command-line arguments.
+ * @param timeoutMs - Maximum wall-clock time (ms) before the process is killed.
+ * @returns Combined stdout and stderr as a single string.
+ */
 function exec(
   cmd: string,
   args: string[],
