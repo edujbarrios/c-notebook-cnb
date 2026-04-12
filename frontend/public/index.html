@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Notebook</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!--
+    CodeMirror 5 from CDN for C syntax highlighting.
+    When deploying to production, generate and add SRI integrity hashes:
+      openssl dgst -sha384 -binary <file> | openssl base64 -A
+  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/dracula.min.css" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/clike/clike.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Top toolbar -->
+  <header id="toolbar">
+    <div class="toolbar-left">
+      <span class="logo">&#9881; C Notebook</span>
+      <button id="btn-run-all" title="Run all cells">&#9654;&#9654; Run All</button>
+    </div>
+    <div class="toolbar-right">
+      <button id="btn-save" title="Save notebook">&#128190; Save</button>
+      <button id="btn-load" title="Load notebook">&#128194; Load</button>
+    </div>
+  </header>
+
+  <!-- Notebook body -->
+  <main id="notebook"></main>
+
+  <!-- Floating add-cell button -->
+  <button id="btn-add-cell" title="Add cell at end">+ Code</button>
+
+  <!-- Save / Load modal -->
+  <div id="modal-overlay" class="hidden">
+    <div id="modal">
+      <h3 id="modal-title">Save Notebook</h3>
+      <input id="modal-input" type="text" placeholder="notebook name" autocomplete="off" />
+      <div id="modal-list"></div>
+      <div class="modal-actions">
+        <button id="modal-cancel">Cancel</button>
+        <button id="modal-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

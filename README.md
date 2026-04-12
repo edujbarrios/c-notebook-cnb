@@ -52,6 +52,7 @@ include/        → Header files
 src/            → Source files
 output_cnbs/    → Saved notebooks with .cnb extension
 memory/         → Temporary compilation and execution files
+frontend/       → Web frontend (Google Colab-like UI)
 Makefile        → Build script
 README.md       → This file
 ```
@@ -147,6 +148,100 @@ GC-content: 63.16%
 
 ---
 ````
+
+## Web Frontend (Google Colab-like UI)
+
+A web-based frontend that emulates Google Colab is available in the `frontend/` directory. It provides:
+
+- **Cell-based editing** with syntax highlighting (CodeMirror)
+- **Run individual cells** or **Run All** with real-time output
+- **Add, delete, reorder** cells interactively
+- **Save/Load** notebooks using the `.cnb` format
+- **Keyboard shortcuts**: `Shift+Enter` to run the current cell
+
+### Requirements
+- Node.js (v18+)
+- GCC Compiler
+
+### Setup & Run (Frontend Only)
+
+```bash
+cd frontend
+npm install
+npm run build
+npm start
+```
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### How It Works
+
+The frontend consists of:
+- **Express server** (TypeScript) — serves the UI and exposes a REST API for cell management, compilation, and `.cnb` file handling
+- **Web UI** (HTML/CSS/JS) — single-page application styled after Google Colab with CodeMirror editors for C code
+
+The server compiles C code by concatenating all cells into a single source file and invoking GCC, mirroring the exact same compilation model as the terminal backend.
+
+## Running Backend and Frontend Together
+
+The terminal backend (`cnb`) and the web frontend are two independent interfaces to the same notebook concept. They share the `output_cnbs/` directory for saved `.cnb` files and the `memory/` directory for temporary compilation artifacts, so notebooks saved in one can be loaded in the other.
+
+### Quick Start (both components)
+
+From the project root:
+
+```bash
+# 1. Build the terminal backend
+make
+
+# 2. Build the web frontend
+cd frontend
+npm install
+npm run build
+cd ..
+```
+
+### Running the terminal backend
+
+```bash
+./cnb
+```
+
+This starts the interactive terminal UI. Use `:save`, `:load`, and `:exit` commands as documented above.
+
+### Running the web frontend
+
+```bash
+cd frontend
+npm start
+```
+
+This starts the web server on port 3000 (configurable via the `PORT` environment variable). Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+To run on a custom port:
+
+```bash
+PORT=8080 npm start
+```
+
+### Using both at the same time
+
+You can run both interfaces simultaneously in separate terminals:
+
+**Terminal 1 — Web frontend:**
+```bash
+cd frontend && npm start
+```
+
+**Terminal 2 — Terminal backend:**
+```bash
+./cnb
+```
+
+Both share the `output_cnbs/` directory, so a notebook saved via the web UI (using the **Save** button) can be loaded in the terminal backend with `:load`, and vice versa.
+
+> [!NOTE]
+> Both interfaces use the `memory/` directory for temporary compilation files. If you run a cell from both interfaces at the exact same time, there may be a brief file conflict. In practice this is unlikely, but for safety, avoid compiling from both interfaces simultaneously.
 
 ## Author
 
