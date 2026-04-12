@@ -64,7 +64,7 @@ export async function compileAndRun(
 }
 
 /**
- * Remove temporary compilation artefacts from the memory directory.
+ * Remove temporary compilation artifacts from the memory directory.
  */
 function cleanupTempFiles(): void {
   try {
