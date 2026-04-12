@@ -4,6 +4,7 @@
 #include <string.h>
 
 void save_notebook_file(const char *filename) {
+    if (!filename) return;
     FILE *file = fopen(filename, "w");
     if (!file) return;
     fprintf(file, "CNOTEBOOK\n");
@@ -15,6 +16,7 @@ void save_notebook_file(const char *filename) {
 }
 
 void load_notebook_file(const char *filename) {
+    if (!filename) return;
     FILE *file = fopen(filename, "r");
     if (!file) return;
     char line[MAX_CODE_LENGTH];
@@ -33,11 +35,13 @@ void load_notebook_file(const char *filename) {
         notebook[cell_index].output[0] = '\0';
         while (fgets(line, sizeof(line), file)) {
             if (strncmp(line, "<<<", 3) == 0) break;
-            strcat(notebook[cell_index].code, line);
+            strncat(notebook[cell_index].code, line,
+                    MAX_CODE_LENGTH - strlen(notebook[cell_index].code) - 1);
         }
         while (fgets(line, sizeof(line), file)) {
             if (strncmp(line, "---", 3) == 0) break;
-            strcat(notebook[cell_index].output, line);
+            strncat(notebook[cell_index].output, line,
+                    MAX_CODE_LENGTH - strlen(notebook[cell_index].output) - 1);
         }
     }
     fclose(file);

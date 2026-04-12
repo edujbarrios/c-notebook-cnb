@@ -19,6 +19,10 @@ export async function compileAndRun(
   cellsCodes: string[],
   upToIndex: number
 ): Promise<CompilationResult> {
+  if (upToIndex < 0 || upToIndex >= cellsCodes.length) {
+    return { success: false, output: "Invalid cell index" };
+  }
+
   fs.mkdirSync(MEMORY_DIR, { recursive: true });
 
   // Build a single C source that wraps every cell inside main()
@@ -38,7 +42,7 @@ export async function compileAndRun(
 
   // Compile
   try {
-    await exec("gcc", [TEMP_C, "-o", TEMP_OUT, "-lm"]);
+    await runCommand("gcc", [TEMP_C, "-o", TEMP_OUT, "-lm"]);
   } catch (err: unknown) {
     const msg =
       err instanceof Error ? err.message : "Unknown compilation error";
@@ -47,12 +51,27 @@ export async function compileAndRun(
 
   // Execute
   try {
-    const stdout = await exec(TEMP_OUT, [], 10_000);
+    const stdout = await runCommand(TEMP_OUT, [], 10_000);
     return { success: true, output: stdout };
   } catch (err: unknown) {
     const msg =
       err instanceof Error ? err.message : "Unknown execution error";
     return { success: false, output: msg };
+  } finally {
+    // Clean up temporary files
+    cleanupTempFiles();
+  }
+}
+
+/**
+ * Remove temporary compilation artefacts from the memory directory.
+ */
+function cleanupTempFiles(): void {
+  try {
+    if (fs.existsSync(TEMP_C)) fs.unlinkSync(TEMP_C);
+    if (fs.existsSync(TEMP_OUT)) fs.unlinkSync(TEMP_OUT);
+  } catch {
+    // Best-effort cleanup; ignore errors
   }
 }
 
@@ -63,7 +82,7 @@ export async function compileAndRun(
  * @param timeoutMs - Maximum wall-clock time (ms) before the process is killed.
  * @returns Combined stdout and stderr as a single string.
  */
-function exec(
+function runCommand(
   cmd: string,
   args: string[],
   timeoutMs = 30_000

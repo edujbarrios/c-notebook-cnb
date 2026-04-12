@@ -21,5 +21,6 @@ extern Cell notebook[MAX_CELLS];
 extern int cell_count;
 
 void run_cell(int cell_index);
+void print_header(void);
 
 #endif
