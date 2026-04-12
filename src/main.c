@@ -6,8 +6,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#define CLEAR_SCREEN "\033[2J\033[H"
-#define SET_COLOR_CYAN "\033[0;36m"
 #define SET_COLOR_RESET "\033[0m"
 #define OUTPUT_DIRECTORY "output_cnbs/"
 
@@ -19,23 +17,19 @@ int main() {
     char filename[256] = {0};
 
     while (1) {
-        printf(CLEAR_SCREEN);
-        printf(SET_COLOR_CYAN);
-        printf("╔════════════════════════════════════════════════════════╗\n");
-        printf("║              C Notebook Pure Terminal Mode            ║\n");
-        printf("╠════════════════════════════════════════════════════════╣\n");
-        printf("║ Commands: :save  :load  :exit                         ║\n");
-        printf("╚════════════════════════════════════════════════════════╝\n");
-        printf("Current cells: %d\n", cell_count);
+        print_header();
         printf("Enter code for cell %d (finish with :end):\n", cell_count + 1);
 
         notebook[cell_count].code[0] = '\0';
         while (fgets(input, sizeof(input), stdin)) {
             if (strcmp(input, ":end\n") == 0) break;
-            if (strncmp(input, ":exit", 5) == 0) return 0;
+            if (strncmp(input, ":exit", 5) == 0) {
+                printf(SET_COLOR_RESET);
+                return 0;
+            }
             if (strncmp(input, ":save", 5) == 0) {
                 printf("Enter filename to save (max 240 chars, without extension): ");
-                fgets(filename, sizeof(filename), stdin);
+                if (!fgets(filename, sizeof(filename), stdin)) continue;
                 filename[strcspn(filename, "\n")] = 0;
                 char full_filename[MAX_CODE_LENGTH];
                 snprintf(full_filename, sizeof(full_filename), "%s%.240s.cnb", OUTPUT_DIRECTORY, filename);
@@ -52,8 +46,13 @@ int main() {
             }
             strncat(notebook[cell_count].code, input, MAX_CODE_LENGTH - strlen(notebook[cell_count].code) - 1);
         }
-        run_cell(cell_count);
-        cell_count++;
+
+        if (cell_count < MAX_CELLS) {
+            run_cell(cell_count);
+            cell_count++;
+        } else {
+            printf("Maximum number of cells reached.\n");
+        }
         printf("Press ENTER to continue.\n");
         getchar();
     }

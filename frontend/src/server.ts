@@ -76,8 +76,8 @@ app.delete("/api/cells/:id", (req, res) => {
 /** Move a cell */
 app.post("/api/cells/:id/move", (req, res) => {
   const id = Number(req.params.id);
-  const newIndex: number = req.body?.newIndex;
-  if (newIndex === undefined)
+  const newIndex: number | undefined = req.body?.newIndex;
+  if (newIndex === undefined || !Number.isFinite(newIndex))
     return res.status(400).json({ error: "newIndex required" });
   if (!moveCell(notebook, id, newIndex))
     return res.status(400).json({ error: "Invalid move" });

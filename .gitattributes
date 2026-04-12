@@ -1,0 +1,16 @@
+# Linguist language detection overrides
+# Ensure GitHub identifies this repository as C and TypeScript
+
+*.c linguist-detectable=true
+*.h linguist-detectable=true
+*.ts linguist-detectable=true
+
+# Exclude vendored/generated files from language statistics
+frontend/public/app.js linguist-vendored=true
+frontend/public/styles.css linguist-vendored=true
+frontend/public/index.html linguist-vendored=true
+*.json linguist-detectable=false
+*.css linguist-detectable=false
+*.html linguist-detectable=false
+*.js linguist-detectable=false
+Makefile linguist-detectable=false
