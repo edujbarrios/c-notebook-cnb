@@ -2,10 +2,14 @@
 
 ## Description
 
-C Notebook provides two interfaces for the same `.cnb` notebook workflow:
+C Notebook is a notebook environment for writing and running C code in reusable cells, then saving that work as `.cnb` notebooks.
+
+It works by using a shared notebook format across two interfaces:
 
 - **backend/**: terminal C notebook engine
 - **frontend/**: web UI (Google Colab-like)
+
+Both interfaces compile and execute C code with GCC and use the same notebook storage, so notebooks created in one interface can be opened in the other.
 
 The repository root is intentionally split into these two top-level directories.
 
