@@ -1,3 +1,6 @@
+# Dependencies
+node_modules/
+
 # Compiled binaries
 backend/cnb
 backend/memory/temp.out

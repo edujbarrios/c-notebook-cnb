@@ -1,0 +1,23 @@
+{
+  "name": "c-notebook-cnb",
+  "version": "1.0.0",
+  "private": true,
+  "description": "All-in-one C Notebook – terminal backend and web frontend in a single project",
+  "scripts": {
+    "postinstall": "cd frontend && npm install",
+    "build:backend": "cd backend && make",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "start": "node frontend/dist/server.js",
+    "dev": "npm run build && npm run start",
+    "clean:backend": "cd backend && make clean",
+    "clean:frontend": "cd frontend && rm -rf dist",
+    "clean": "npm run clean:backend && npm run clean:frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edujbarrios/c-notebook-cnb.git"
+  },
+  "author": "Eduardo J. Barrios",
+  "license": "ISC"
+}
