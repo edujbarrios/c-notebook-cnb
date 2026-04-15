@@ -4,44 +4,42 @@
 
 C Notebook is a notebook environment for writing and running C code in reusable cells, then saving that work as `.cnb` notebooks.
 
-It works by using a shared notebook format across two interfaces:
+It provides two interfaces that share the same `.cnb` format:
 
 - **backend/**: terminal C notebook engine
 - **frontend/**: web UI (Google Colab-like)
 
-Both interfaces compile and execute C code with GCC and use the same notebook storage, so notebooks created in one interface can be opened in the other.
+Both interfaces compile and execute C code with GCC and share notebook storage, so notebooks created in one interface can be opened in the other.
 
-## Quick Start (All-in-One)
-
-The fastest way to get up and running with both frontend and backend:
+## Direct Execution (Recommended)
 
 ### Requirements
 - GCC
 - Make
 - Node.js (v18+)
 
-### Using npm
-
-```bash
-npm install   # installs frontend dependencies automatically
-npm run build # builds the C backend and TypeScript frontend
-npm start     # starts the web server at http://localhost:3000
-```
-
-Or do it all in one step:
+From the repository root, run:
 
 ```bash
 npm install && npm run dev
 ```
 
-### Using Make
+Then open [http://localhost:3000](http://localhost:3000).
+
+This command flow:
+1. Installs frontend dependencies (via `postinstall`)
+2. Builds the C backend
+3. Builds the TypeScript frontend
+4. Starts the web server
+
+## Alternative (Make)
 
 ```bash
-make install  # installs frontend dependencies
-make dev      # builds everything and starts the server
+make install
+make dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to use the web notebook.
+This performs the same build-and-run flow using `make`.
 
 ## Repository Structure
 
@@ -52,7 +50,7 @@ backend/       → C terminal backend, build files, memory, and saved notebooks
 frontend/      → Web frontend (TypeScript + Express + static UI)
 ```
 
-## Backend (Terminal)
+## Backend Only (Terminal)
 
 ### Build & Run
 
@@ -71,7 +69,7 @@ Backend data paths:
 - `backend/output_cnbs/` for saved `.cnb` notebooks
 - `backend/memory/` for temporary compilation artifacts
 
-## Frontend (Web UI)
+## Frontend Only (Web UI)
 
 ### Build & Run
 
