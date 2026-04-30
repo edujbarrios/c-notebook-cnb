@@ -30,6 +30,16 @@ async function api(url, opts = {}) {
   if (opts.body && typeof opts.body !== "string")
     opts.body = JSON.stringify(opts.body);
   const res = await fetch(url, opts);
+  if (!res.ok) {
+    let errMsg;
+    try {
+      const errData = await res.json();
+      errMsg = errData.error || res.statusText;
+    } catch {
+      errMsg = res.statusText;
+    }
+    throw new Error(`${res.status} ${errMsg}`);
+  }
   return res.json();
 }
 
@@ -255,8 +265,22 @@ function openModal(title, showInput, items = []) {
   $overlay.classList.remove("hidden");
   if (showInput) $modalInput.focus();
 
+  function onKey(e) {
+    if (e.key === "Enter" && document.getElementById("modal").contains(document.activeElement)) {
+      closeModal($modalInput.value || null);
+    }
+    if (e.key === "Escape") {
+      closeModal(null);
+    }
+  }
+
+  document.addEventListener("keydown", onKey);
+
   return new Promise((resolve) => {
-    _modalResolve = resolve;
+    _modalResolve = (value) => {
+      document.removeEventListener("keydown", onKey);
+      resolve(value);
+    };
   });
 }
 
