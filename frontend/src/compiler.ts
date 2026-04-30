@@ -1,10 +1,9 @@
 import { execFile } from "child_process";
+import { randomUUID } from "crypto";
 import * as fs from "fs";
 import * as path from "path";
 
 const MEMORY_DIR = path.resolve(__dirname, "../../backend/memory");
-const TEMP_C = path.join(MEMORY_DIR, "temp.c");
-const TEMP_OUT = path.join(MEMORY_DIR, "temp.out");
 
 export interface CompilationResult {
   success: boolean;
@@ -14,6 +13,9 @@ export interface CompilationResult {
 /**
  * Compiles and runs concatenated C code from all cells up to the given index.
  * Mirrors the behaviour of the original C backend's run_cell().
+ *
+ * Each invocation uses a unique pair of temp files so concurrent requests
+ * (e.g. two cells running at the same time) never clobber each other.
  */
 export async function compileAndRun(
   cellsCodes: string[],
@@ -24,6 +26,11 @@ export async function compileAndRun(
   }
 
   fs.mkdirSync(MEMORY_DIR, { recursive: true });
+
+  // Unique suffix so concurrent compilations don't share files
+  const uid = randomUUID();
+  const tempC = path.join(MEMORY_DIR, `temp_${uid}.c`);
+  const tempOut = path.join(MEMORY_DIR, `temp_${uid}.out`);
 
   // Build a single C source that wraps every cell inside main()
   const lines: string[] = [
@@ -38,38 +45,40 @@ export async function compileAndRun(
   }
   lines.push("return 0; }");
 
-  fs.writeFileSync(TEMP_C, lines.join("\n"), "utf-8");
+  fs.writeFileSync(tempC, lines.join("\n"), "utf-8");
 
-  // Compile
   try {
-    await runCommand("gcc", [TEMP_C, "-o", TEMP_OUT, "-lm"]);
-  } catch (err: unknown) {
-    const msg =
-      err instanceof Error ? err.message : "Unknown compilation error";
-    return { success: false, output: msg };
-  }
+    // Compile
+    try {
+      await runCommand("gcc", [tempC, "-o", tempOut, "-lm"]);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Unknown compilation error";
+      return { success: false, output: msg };
+    }
 
-  // Execute
-  try {
-    const stdout = await runCommand(TEMP_OUT, [], 10_000);
-    return { success: true, output: stdout };
-  } catch (err: unknown) {
-    const msg =
-      err instanceof Error ? err.message : "Unknown execution error";
-    return { success: false, output: msg };
+    // Execute
+    try {
+      const stdout = await runCommand(tempOut, [], 10_000);
+      return { success: true, output: stdout };
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "Unknown execution error";
+      return { success: false, output: msg };
+    }
   } finally {
-    // Clean up temporary files
-    cleanupTempFiles();
+    // Always clean up, regardless of compilation or execution outcome
+    cleanupTempFiles(tempC, tempOut);
   }
 }
 
 /**
  * Remove temporary compilation artifacts from the memory directory.
  */
-function cleanupTempFiles(): void {
+function cleanupTempFiles(tempC: string, tempOut: string): void {
   try {
-    if (fs.existsSync(TEMP_C)) fs.unlinkSync(TEMP_C);
-    if (fs.existsSync(TEMP_OUT)) fs.unlinkSync(TEMP_OUT);
+    if (fs.existsSync(tempC)) fs.unlinkSync(tempC);
+    if (fs.existsSync(tempOut)) fs.unlinkSync(tempOut);
   } catch {
     // Best-effort cleanup; ignore errors
   }
